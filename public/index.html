@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Video Converter</title>
+  </head>
+  <body>
+    <h1>Video Converter</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+      <label for="video">Select video:</label>
+      <input type="file" id="video" name="video" required />
+      <label for="format">Select output format:</label>
+      <select id="format" name="format">
+        <option value="mp4">MP4</option>
+        <option value="avi">AVI</option>
+        <option value="mkv">MKV</option>
+      </select>
+      <label for="resolution">Select resolution:</label>
+      <select id="resolution" name="resolution">
+        <option value="">Original</option>
+        <option value="640x480">480p</option>
+        <option value="1280x720">720p</option>
+        <option value="1920x1080">1080p</option>
+      </select>
+      <button type="submit">Convert</button>
+    </form>
+
+    <script>
+      document
+        .getElementById("upload-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(e.target);
+          const response = await fetch("/convert", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "converted_video";
+            a.click();
+          } else {
+            alert("Conversion failed");
+          }
+        });
+    </script>
+  </body>
+</html>
